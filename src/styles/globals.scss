@@ -1,0 +1,11 @@
+@import "./fonts.scss";
+@import "bootstrap/scss/bootstrap.scss";
+@import "@rainbow-me/rainbowkit/styles.css";
+@import "../components/LandingPage.scss";
+@import "../components/ElectricHeader.scss";
+@import "../components//TechBtn.scss";
+
+div[data-rk] {
+    overflow: hidden;
+    height: 100vh;
+}
