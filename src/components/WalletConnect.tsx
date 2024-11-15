@@ -1,8 +1,10 @@
 import { PropsWithChildren } from "react";
-
+import  merge from "lodash.merge";
 import {
   getDefaultConfig,
   RainbowKitProvider,
+  Theme,
+  lightTheme
 } from '@rainbow-me/rainbowkit';
 import { WagmiProvider } from 'wagmi';
 import {
@@ -17,6 +19,16 @@ import {
   QueryClient,
 } from "@tanstack/react-query";
 
+
+const myTheme = merge(lightTheme(), {
+  colors: {
+    accentColor: '#1FE5B5',
+    modalBackground: 'rgba(0, 0, 0, 0.8)',
+    modalBorder: "#1FE5B5",
+    modalText: "white",
+    modalTextSecondary: "white"
+  },
+} as Theme);
 const config = getDefaultConfig({
     appName: 'My RainbowKit App',
     projectId: 'YOUR_PROJECT_ID',
@@ -27,9 +39,9 @@ const config = getDefaultConfig({
   const queryClient = new QueryClient();
 
 export const WalletConnector = ({children}: PropsWithChildren) => {
-   return <WagmiProvider config={config}>
+   return <WagmiProvider  config={config}>
    <QueryClientProvider client={queryClient}>
-     <RainbowKitProvider>
+     <RainbowKitProvider theme={myTheme}>
        {children}
      </RainbowKitProvider>
    </QueryClientProvider>

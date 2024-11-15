@@ -1,17 +1,28 @@
 import Image from "next/image";
 import bgCity from "../assets/background.png";
-import formBg from "../assets/form-bg.png";
-import formShield from "../assets/form-shield.png";
+import leftGliphs from "../assets/left-glips.png";
+import rightGliphs from "../assets/right-glips.png";
 import { TechButton } from "./TechBtn";
 import { useAccount } from "wagmi";
-import { ConnectButton } from "@rainbow-me/rainbowkit";
+import { ConnectButton, useConnectModal } from "@rainbow-me/rainbowkit";
 import { ElectricHeader } from "./ElectricHeader";
 import topBorder from "../assets/top-border.png";
 import botBorder from "../assets/bot-border.png";
+import { useEffect, useState } from "react";
+import OpenAI from "openai";
+import { UserProfile } from "./UserProfile";
+import { MintForm } from "./MintForm";
+import { Spinner } from "./Spinner";
+
 
 export const LandingPage = () => {
-  const { address } = useAccount();
-  
+  const { address, isConnected } = useAccount();
+  const { openConnectModal, connectModalOpen } = useConnectModal();
+
+  useEffect(() => {
+    
+  }, []);
+
   return (
     <div
       className="landing-page"
@@ -22,6 +33,24 @@ export const LandingPage = () => {
       }}
     >
       <div
+        className="left-gliph"
+        style={{
+          background: `url(${leftGliphs.src})`,
+          backgroundSize: "contain",
+          backgroundPosition: "start",
+          backgroundRepeat: "no-repeat"
+        }}
+      ></div>
+         <div
+        className="right-gliph"
+        style={{
+          background: `url(${rightGliphs.src})`,
+          backgroundSize: "contain",
+          backgroundPosition: "right",
+          backgroundRepeat: "no-repeat"
+        }}
+      ></div>
+      <div
         className="top-nav"
         style={{
           background: `url(${topBorder.src})`,
@@ -31,8 +60,11 @@ export const LandingPage = () => {
         }}
       >
         <div className="d-flex justify-content-between">
-        <p>Namespace</p>
-        <TechButton text="Connect"></TechButton>
+          <p className="mb-0" style={{fontSize:20}}>OP_PUNK_</p>
+          {!isConnected ? <TechButton
+            onClick={() => openConnectModal?.()}
+            text="Connect"
+          ></TechButton>: <UserProfile/>}
         </div>
       </div>
       <div
@@ -44,39 +76,17 @@ export const LandingPage = () => {
           backgroundPosition: "top",
         }}
       >
-        <div className="d-flex justify-content-between">
-        <p>Namespace</p>
-
+        <div className="d-flex text-center justify-content-center">
+          <p style={{margin:0, opacity:"0.4", fontSize:11, letterSpacing:"0px"}}>Created by Namespace. Optimism Network</p>
         </div>
       </div>
       <div className="landing-container">
-        <div className="page-form">
+        <div className="page-form d-flex flex-column justify-content-center">
           <div className="form-header mb-3">
             <h1>OpPunk</h1>
             <p className="subtext">GET YOUR OP PUNK</p>
           </div>
-          <div className="form-tech-container">
-            <div
-              style={{
-                background: `url(${formBg.src})`,
-                backgroundSize: "100% 100%",
-              }}
-              className="form-tech-content d-flex flex-column justify-content-end"
-            >
-              <div className="p-3">
-                <div className="d-flex">
-                  <div className="tech-avatar-cont mb-3 d-flex justify-content-center m-auto"></div>
-                </div>
-                <input
-                  placeholder="Your name here...."
-                  className="tech-input"
-                ></input>
-                <TechButton text={"register"} className="mt-2">
-                  Register
-                </TechButton>
-              </div>
-            </div>
-          </div>
+         <MintForm/>
         </div>
       </div>
     </div>

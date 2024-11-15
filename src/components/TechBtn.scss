@@ -1,10 +1,26 @@
 .cybr-btn {
 
-    // &.disabled {
-    //     --primary-hue: grey;
-    //     --primary: grey;
+    &.disabled {
+        cursor: default;
+        --primary-hue: grey;
+        --primary:grey;
 
-    // }
+        &:hover {
+          --primary-hue: grey;
+          --primary: grey;
+          .cybr-btn__glitch {
+            display: none;
+          }
+        }
+
+        .cybr-btn__glitch {
+          display: none;
+
+          // &:hover {
+          //   display: none;
+          // }
+        }
+    }
 
     font-family: 'ShareTech';
     --primary: #1FE5B5;

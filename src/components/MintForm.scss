@@ -1,0 +1,19 @@
+.mint-form {
+    .tech-input-container {
+        position: relative;
+
+        .loader-cont {
+            position: absolute;
+            right: 10px;
+            top: 7px;
+        }
+
+    }
+    .err-container {
+        .err-message {
+            font-size: 12px;
+            color: $pink;
+            text-align: center;
+        }
+    }
+}
