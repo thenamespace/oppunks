@@ -24,7 +24,7 @@ const oppunksListing: Listing = {
 };
 
 const testAvatar =
-  "https://cdn.openart.ai/uploads/image_RVj0fNCw_1731704971746_512.webp";
+  "https://cdn.openart.ai/uploads/image_lcAaZ4Oa_1731704366684_raw.jpg";
 
 export const MintForm = () => {
   const [searchLabel, setSearchLabel] = useState("");
@@ -104,9 +104,6 @@ export const MintForm = () => {
         args: params.args,
         abi: params.abi
     })
-
-    console.log(tx, "TRANSACTION")
-
   };
 
   const debouncedCheckAvailable = useCallback(
@@ -120,7 +117,13 @@ export const MintForm = () => {
 
   return (
     <>
-      <div className="form-tech-container mint-form d-flex flex-column justify-content-end p-4">
+      <div className="mint-form d-flex flex-column justify-content-end p-4">
+      <div className="form-header mb-3">
+            <h1>OpPunk</h1>
+            <p className="subtext">GET YOUR OP PUNK</p>
+          </div>
+        <div className="form-tech-container">
+
         <div className="d-flex">
           <div className="tech-avatar-cont mb-3 d-flex justify-content-center m-auto">
             <img src={testAvatar} width={150}></img>
@@ -154,6 +157,7 @@ export const MintForm = () => {
         </div>
         <div className="err-container mt-2">
           {isTaken && <p className="err-message m-0">Already Registered_</p>}
+        </div>
         </div>
       </div>
     </>

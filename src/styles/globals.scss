@@ -1,12 +1,8 @@
+@import "./vars.scss";
 @import "./fonts.scss";
 @import "bootstrap/scss/bootstrap.scss";
 @import "@rainbow-me/rainbowkit/styles.css";
-@import "../components/LandingPage.scss";
-@import "../components/ElectricHeader.scss";
-@import "../components//TechBtn.scss";
-@import "../components/UserProfile.scss";
-@import "../components/Spinner.scss";
-@import "../components/MintForm.scss";
+@import "../components/styles";
 
 div[data-rk] {
     overflow: hidden;
@@ -15,4 +11,8 @@ div[data-rk] {
 
 * {
     font-family: 'ShareTech';
+}
+
+a {
+    text-decoration: none;
 }

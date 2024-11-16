@@ -22,4 +22,17 @@
             font-weight: bold;
         }
     }
+
+}
+
+.user-profile-cont {
+    .nav-item {
+        color: $lightblue;
+        cursor: pointer;
+        transition: all 0.2s linear;
+        text-decoration: none;
+        &:hover {
+            text-shadow:0px 0px 2px $lightblue, 0px 0px 2px $lightblue;
+        }
+    }
 }
