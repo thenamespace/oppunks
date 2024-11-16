@@ -35,8 +35,9 @@
     clip-path: circle(100%);
     padding: 25px;
   }
+}
 
-  .tech-input {
+.tech-input {
     outline: 1px solid $lightblue;
     background: transparent;
     border: none;
@@ -45,21 +46,19 @@
     padding-left: 15px;
     width: 100%;
     padding: 15px;
+    &::placeholder {
+        color: rgb(255,255,255,0.3) !important;
+    }
 
     &:focus {
       transition: 0.4s all linear;
-      outline: 1px solid $pink;
-
-      &::placeholder {
-        color: darken($pink, 25%);
-      }
+      outline: 1px solid #FFF;
     }
 
     &::placeholder {
       color: white;
     }
   }
-}
 
 
 @media (max-width: 600px) {

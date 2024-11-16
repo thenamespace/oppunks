@@ -6,16 +6,9 @@ import { PlainBtn } from "./TechBtn";
 import Link from "next/link";
 import { SideModal } from "./SideModal";
 import { SinglePunk } from "./SinglePunk";
+import { PunkSubname } from "./Models";
 
 const indexer = "https://indexer.namespace.tech/api/v1/nodes";
-
-interface PunkSubname {
-  expiry: number;
-  label: string;
-  name: string;
-  texts: Record<string, string>;
-  addresses: Record<string, string>;
-}
 
 const fetchPunkNames = async (owner: string) => {
   const { data } = await axios.get<{
@@ -61,10 +54,9 @@ export const MyPunks = () => {
 
   return (
     <div className="my-punks-container d-flex justify-content-center align-items-start">
-        {selectedPunk && <SideModal open={true} onClose={() => setSelectedPunks(undefined)}>
-             <div>Hello THERE!!</div>
-            </SideModal>}
-        <SideModal open={editModalOpen} onClose={() => setEditModal(!editModalOpen)}/>
+        {selectedPunk !== undefined && <SideModal open={true} onClose={() => setSelectedPunks(undefined)}>
+            <SinglePunk punk={selectedPunk}/>
+        </SideModal>}
       <div className="punks-form">
         {punks.fetching && (
           <div
@@ -96,7 +88,7 @@ export const MyPunks = () => {
               <>
                 {punks.items.map((punk, index) => (
                   <div
-                    onClick={() => setEditModal(!editModalOpen)}
+                    onClick={() => setSelectedPunks(punk)}
                     key={punk.name + "-" + index}
                     className="punk-item d-flex align-items-center"
                   >
