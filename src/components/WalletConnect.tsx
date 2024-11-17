@@ -30,8 +30,9 @@ const myTheme = merge(lightTheme(), {
   },
 } as Theme);
 const config = getDefaultConfig({
-    appName: 'My RainbowKit App',
-    projectId: 'YOUR_PROJECT_ID',
+    appName: 'OpPunk',
+    projectId: 'a5f353014d529c8f85633e3c6250ac28',
+    appUrl: "https://oppunk.namespace.ninja",
     chains: [mainnet, polygon, optimism, arbitrum, base],
     ssr: true, // If your dApp uses server side rendering (SSR)
   });

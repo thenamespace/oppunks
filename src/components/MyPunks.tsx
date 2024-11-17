@@ -7,6 +7,7 @@ import Link from "next/link";
 import { SideModal } from "./SideModal";
 import { SinglePunk } from "./SinglePunk";
 import { PunkSubname } from "./Models";
+import { useRouter } from "next/router";
 
 const indexer = "https://indexer.namespace.tech/api/v1/nodes";
 
@@ -26,6 +27,7 @@ const fetchPunkNames = async (owner: string) => {
 export const MyPunks = () => {
   const { address } = useAccount();
   const [selectedPunk, setSelectedPunks] = useState<PunkSubname>();
+  const router = useRouter();
   const [searchFilter, setSearchFilter] = useState("");
   const [punks, setPunks] = useState<{
     fetching: boolean;
@@ -49,7 +51,15 @@ export const MyPunks = () => {
           items: res.items,
           totalItems: res.totalItems,
         });
-      }, 1000);
+        const _selectedPunk = router.query.selected;
+        if (_selectedPunk && _selectedPunk.length) {
+          const currentPunk = res.items.find(pnk => pnk.name === _selectedPunk);
+          if (currentPunk !== undefined) {
+            setSelectedPunks(currentPunk)
+          }
+        }
+
+      }, 0);
     });
   }, [address]);
 

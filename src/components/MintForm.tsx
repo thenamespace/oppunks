@@ -8,9 +8,15 @@ import { optimism } from "viem/chains";
 import { useCallback, useEffect, useState } from "react";
 import { Spinner } from "./Spinner";
 import { debounce } from "lodash";
-import { useAccount, usePublicClient, useSwitchChain, useWalletClient } from "wagmi";
+import {
+  useAccount,
+  usePublicClient,
+  useSwitchChain,
+  useWalletClient,
+} from "wagmi";
 import { toast } from "react-toastify";
 import Link from "next/link";
+import { useConnectModal } from "@rainbow-me/rainbowkit";
 
 const namespaceClient = createNamespaceClient({
   chainId: optimism.id,
@@ -24,7 +30,6 @@ const MAX_COUNT = 469;
 
 const getRandomPunkImage = () => {
   const randomIndex = Math.floor(Math.random() * MAX_COUNT) + 1;
-
   return `https://punks.namespace.ninja/punk_${randomIndex}.jpg`;
 };
 
@@ -51,10 +56,11 @@ export const MintForm = () => {
     generating: true,
     value: getRandomPunkImage(),
   });
+  const { openConnectModal } = useConnectModal()
   const [mintStep, setMintStep] = useState<MintSteps>(MintSteps.Start);
   const [searchLabel, setSearchLabel] = useState("");
   const { data: walletClient } = useWalletClient({ chainId: optimism.id });
-  const publicClient = usePublicClient({chainId: optimism.id })
+  const publicClient = usePublicClient({ chainId: optimism.id });
   const { switchChain } = useSwitchChain();
   const { address, chain } = useAccount();
   const [indicator, setIndicator] = useState<{
@@ -102,15 +108,16 @@ export const MintForm = () => {
     setPunkAvatar({ ...punkAvatar, generating: true });
     setTimeout(() => {
       setPunkAvatar({ value: getRandomPunkImage(), generating: false });
-    }, 3000);
+    }, 2000);
   };
 
   const handleMint = async () => {
     if (!walletClient || !address) {
+      openConnectModal?.();
       return;
     }
 
-    setMintState({...mintState, waitingWallet: true})
+    setMintState({ ...mintState, waitingWallet: true });
     let params: MintTransactionParameters;
     try {
       if (!chain || chain.id !== optimism.id) {
@@ -144,14 +151,14 @@ export const MintForm = () => {
         }
       );
     } catch (err: any) {
-      setMintState({...mintState, waitingWallet: false})
+      setMintState({ ...mintState, waitingWallet: false });
       if (err.details) {
-        toast(err.details)
-      } else if(err?.response?.data) {
-        toast(err.response?.data?.message)
+        toast(err.details);
+      } else if (err?.response?.data) {
+        toast(err.response?.data?.message);
       }
       return;
-    } 
+    }
 
     try {
       //@ts-ignore
@@ -162,14 +169,15 @@ export const MintForm = () => {
         args: params.args,
         abi: params.abi,
       });
-      setMintStep(MintSteps.PendingTx)
-      setMintState({waitingWallet: false, waitingTx: true, txHash: tx})
+      setMintStep(MintSteps.PendingTx);
+      setMintState({ waitingWallet: false, waitingTx: true, txHash: tx });
       setTimeout(() => {
-        setMintStep(MintSteps.Success)
-      }, 10000)
-
+        publicClient?.waitForTransactionReceipt({hash:tx}).then(res => {
+          setMintStep(MintSteps.Success);
+        })
+      }, 8000);
     } catch (err: any) {
-      setMintStep(MintSteps.Start)
+      setMintStep(MintSteps.Start);
       const deniedErr =
         err.details.includes("User rejected the request") ||
         err.details.includes("User denied transaction signature");
@@ -177,7 +185,7 @@ export const MintForm = () => {
         toast(err.details);
       }
     } finally {
-      setMintState({...mintState, waitingTx: false, waitingWallet: false})
+      setMintState({ ...mintState, waitingTx: false, waitingWallet: false });
     }
   };
 
@@ -187,7 +195,7 @@ export const MintForm = () => {
   );
 
   const mintBtnDisabled =
-    searchLabel.length === 0 || indicator.isChecking || !indicator.isAvailable;
+    searchLabel.length === 0 || indicator.isChecking || !indicator.isAvailable || mintState.waitingTx || mintState.waitingWallet;
   const isTaken =
     searchLabel.length > 0 && !indicator.isChecking && !indicator.isAvailable;
 
@@ -209,18 +217,18 @@ export const MintForm = () => {
                   {punkAvatar.generating && <Spinner size="big" />}
                 </div>
                 <p
-                  className={`generate-txt ${
+                  className={`generate-txt mb-1 ${
                     punkAvatar.generating ? "disabled" : ""
                   }`}
                   onClick={
                     punkAvatar.generating ? undefined : () => generateAvatar()
                   }
                 >
-                  ReGenerate_
+                  Generate_
                 </p>
               </div>
-              <p className="text-center">
-                <span style={{ color: "white" }}>
+              <p className="text-center" style={{fontSize: 18}}>
+                <span style={{ color: "white", fontSize: 18 }}>
                   {searchLabel.length ? searchLabel : "{name}"}
                 </span>
                 .oppunk.eth
@@ -253,7 +261,7 @@ export const MintForm = () => {
             </>
           )}
           {mintStep === MintSteps.PendingTx && (
-            <TransactionPending hash="0x0" />
+            <TransactionPending hash={mintState.txHash} />
           )}
           {mintStep === MintSteps.Success && (
             <SuccessScreen
@@ -275,13 +283,17 @@ export const SuccessScreen = ({
   name: string;
 }) => {
   return (
-    <div className="d-flex flex-column align-items-center">
-      <p>Punk_</p>
-      <p>{name}</p>
-      <p>Created succcessfully!</p>
-      <img src={avatar} width={150}></img>
-      <Link href={"/punks?selected=" + name}>
-        <PlainBtn>Check</PlainBtn>
+    <div className="d-flex flex-column align-items-center success-screen">
+      <p className="mb-1">Registration succesfull</p>
+      <p style={{ fontSize: 18, color: "white" }}>{name}</p>
+      <div className="load-border">
+        <img className="avatar" src={avatar} width={150}></img>
+      </div>
+      <Link
+        className="mt-3"
+        href={{ pathname: "/punks", query: { selected: name } }}
+      >
+        <PlainBtn>Confirm_</PlainBtn>
       </Link>
     </div>
   );
