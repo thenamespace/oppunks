@@ -7,6 +7,7 @@ import Link from "next/link";
 import { SideModal } from "./SideModal";
 import { SinglePunk } from "./SinglePunk";
 import { PunkSubname } from "./Models";
+import { validate as isValidBtcAddress } from "bitcoin-address-validation"
 
 const indexer = "https://indexer.namespace.tech/api/v1/nodes";
 
@@ -25,7 +26,6 @@ const fetchPunkNames = async (owner: string) => {
 
 export const MyPunks = () => {
   const { address } = useAccount();
-  const [editModalOpen, setEditModal] = useState(false);
   const [selectedPunk, setSelectedPunks] = useState<PunkSubname>()
   const [punks, setPunks] = useState<{
     fetching: boolean;
@@ -52,10 +52,20 @@ export const MyPunks = () => {
     });
   }, [address]);
 
+  const refreshPunks = async () => {
+    fetchPunkNames(address!!).then((res) => {
+        setPunks({
+            fetching: false,
+            items: res.items,
+            totalItems: res.totalItems,
+          });
+      });
+  }
+
   return (
     <div className="my-punks-container d-flex justify-content-center align-items-start">
         {selectedPunk !== undefined && <SideModal open={true} onClose={() => setSelectedPunks(undefined)}>
-            <SinglePunk punk={selectedPunk}/>
+            <SinglePunk onUpdate={() => refreshPunks()} punk={selectedPunk}/>
         </SideModal>}
       <div className="punks-form">
         {punks.fetching && (
