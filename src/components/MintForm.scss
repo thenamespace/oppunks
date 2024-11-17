@@ -28,6 +28,16 @@
     }
   }
 
+  .cost-info {
+    position: absolute;
+    color: $lightblue;
+    top: 5px;
+    right: 10px;
+    font-size: 13px;
+    cursor: pointer;
+  }
+
+
   .generate-txt {
     cursor: pointer;
 
@@ -156,4 +166,15 @@
             }
         }
     }
+}
+
+.cost-modal {
+  .price {
+    padding: 15px;
+    border: 1px solid $lightblue;
+
+    p {
+      margin: 0px;
+    }
+  }
 }

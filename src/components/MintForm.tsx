@@ -17,6 +17,8 @@ import {
 import { toast } from "react-toastify";
 import Link from "next/link";
 import { useConnectModal } from "@rainbow-me/rainbowkit";
+import { SideModal } from "./SideModal";
+import { TbAlertSquare } from "react-icons/tb";
 
 const namespaceClient = createNamespaceClient({
   chainId: optimism.id,
@@ -59,6 +61,7 @@ export const MintForm = () => {
   const { openConnectModal } = useConnectModal()
   const [mintStep, setMintStep] = useState<MintSteps>(MintSteps.Start);
   const [searchLabel, setSearchLabel] = useState("");
+  const [showCostModal, setShowCostModal] = useState(false);
   const { data: walletClient } = useWalletClient({ chainId: optimism.id });
   const publicClient = usePublicClient({ chainId: optimism.id });
   const { switchChain } = useSwitchChain();
@@ -202,6 +205,31 @@ export const MintForm = () => {
   return (
     <>
       <div className="mint-form d-flex flex-column justify-content-end p-4">
+        <SideModal open={showCostModal} onClose={() => setShowCostModal(false)}>
+          <div className="cost-modal">
+            <p style={{fontSize:24, color:"white"}} className="text-center">Credit Cost</p>
+            <div className="d-flex price justify-content-between align-items-center w-100" style={{color:"white"}}>
+               <p>1 Letters</p>
+               <p>100$</p>
+            </div>
+            <div className="d-flex price justify-content-between align-items-center w-100" style={{color:"white"}}>
+               <p>2 Letters</p>
+               <p>45$</p>
+            </div>
+            <div className="d-flex price justify-content-between align-items-center w-100" style={{color:"white"}}>
+               <p>3 Letters</p>
+               <p>25$</p>
+            </div>
+            <div className="d-flex price justify-content-between align-items-center w-100" style={{color:"white"}}>
+               <p>4 Letters</p>
+               <p>5$</p>
+            </div>
+            <div className="d-flex price justify-content-between align-items-center w-100" style={{color:"white"}}>
+               <p>5+ Letters</p>
+               <p>Free</p>
+            </div>
+          </div>
+        </SideModal>
         <div className="form-header mb-3">
           <h1>OpPunk</h1>
           <p className="subtext">GET YOUR OP PUNK</p>
@@ -210,6 +238,10 @@ export const MintForm = () => {
           {mintStep === MintSteps.Start && (
             <>
               <div className="d-flex flex-column align-items-center">
+                <div className="cost-info d-flex align-items-center" onClick={() => setShowCostModal(true)}>
+                  <TbAlertSquare className="me-1"/>
+                  <div>Credit cost</div>
+                </div>
                 <div className="tech-avatar-cont mb-3 d-flex align-items-center justify-content-center m-auto">
                   {!punkAvatar.generating && (
                     <img src={punkAvatar.value} width={150} height={150}></img>

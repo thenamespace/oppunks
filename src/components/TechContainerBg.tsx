@@ -92,6 +92,8 @@ export const TechContainerBg = (props: PropsWithChildren) => {
               opacity: "0.4",
               fontSize: 11,
               letterSpacing: "0px",
+              zIndex: 99,
+              position: "relative"
             }}
           >
             Created by Namespace. Optimism Network
