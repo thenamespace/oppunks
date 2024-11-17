@@ -9,6 +9,21 @@
         overflow-x: auto;
     }
 
+    .tech-input {
+        background-color: rgb(0, 0, 0, 0.45);
+    }
+
+    .title {
+        font-size: 40px;
+        font-family: "Cyberpunk";
+        letter-spacing: 3px;
+    }
+
+    .p {
+        margin-bottom: 0px;
+        color: $lightblue;;
+    }
+
     .punk-item {
         padding: 10px;
         border-bottom: 1px solid $lightblue;
@@ -33,6 +48,18 @@
             font-size: 18px;
             margin-left: 25px;
             margin-bottom: 0px;
+        }
+    }
+}
+
+@media (max-width: 600px) {
+    .my-punks-container {
+        width: 350px;
+        .title {
+            margin-top: 50px;
+        }
+        .punks-form {
+            width: 350px
         }
     }
 }

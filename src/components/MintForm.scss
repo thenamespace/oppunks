@@ -15,6 +15,22 @@
       text-align: center;
     }
   }
+  .generate-txt {
+    cursor: pointer;
+
+    &:hover {
+      text-shadow:0px 0px 2px $lightblue, 0px 0px 2px $lightblue;
+    }
+
+    &.generating {
+      text-shadow:0px 0px 2px $lightblue, 0px 0px 2px $lightblue;
+    }
+
+    &.disabled {
+      cursor: not-allowed;
+      color: grey;
+    }
+  }
   
   .form-container-square {
     width: 100%;
@@ -24,6 +40,12 @@
     justify-content: center;
     flex-direction: column;
     position: relative;
+}
+
+.tech-avatar-cont {
+  width: 150px;
+  height: 150px;
+  outline: 1px solid $lightblue;
 }
 
   .form-tech-container {
@@ -69,8 +91,8 @@
         }
         .form-header {
             h1 {
-                font-size: 34px;
-                line-height: 36px;
+                font-size: 34px !important;
+                line-height: 36px !important;
             }
         }
     }

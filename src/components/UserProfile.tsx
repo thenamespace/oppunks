@@ -45,11 +45,11 @@ export const UserProfile = () => {
   return (
     <div className="user-profile-cont d-flex align-items-center">
       <div className="nav-container me-3 d-flex">
-      <Link href="/">
-        <div className="nav-item me-3">Register</div>
+        <Link href="/">
+          <div className="nav-item me-3">Register</div>
         </Link>
         <Link href="/punks">
-        <div className="nav-item ">My Punks</div>
+          <div className="nav-item ">My Punks</div>
         </Link>
       </div>
       <div className="user-profile">

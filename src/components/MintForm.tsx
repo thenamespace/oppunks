@@ -1,7 +1,7 @@
 import { createNamespaceClient, Listing } from "namespace-sdk";
-import { TechButton } from "./TechBtn";
+import { PlainBtn, TechButton } from "./TechBtn";
 import { optimism } from "viem/chains";
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Spinner } from "./Spinner";
 import { debounce } from "lodash";
 import { useAccount, useSwitchChain, useWalletClient } from "wagmi";
@@ -14,6 +14,14 @@ const namespaceClient = createNamespaceClient({
 const ETH_COIN = 60;
 const OP_COIN = 2147483658;
 
+const MAX_COUNT = 469;
+
+const getRandomPunkImage = () => {
+  const randomIndex = Math.floor(Math.random() * MAX_COUNT) + 1;
+
+  return `https://punks.namespace.ninja/punk_${randomIndex}.jpg`;
+};
+
 const oppunksListing: Listing = {
   fullName: "oppunk.eth",
   label: "oppunk",
@@ -23,10 +31,14 @@ const oppunksListing: Listing = {
   registryNetwork: "optimism",
 };
 
-const testAvatar =
-  "https://cdn.openart.ai/uploads/image_lcAaZ4Oa_1731704366684_raw.jpg";
-
 export const MintForm = () => {
+  const [punkAvatar, setPunkAvatar] = useState<{
+    generating: boolean;
+    value: string;
+  }>({
+    generating: true,
+    value: getRandomPunkImage(),
+  });
   const [searchLabel, setSearchLabel] = useState("");
   const { data: walletClient } = useWalletClient({ chainId: optimism.id });
   const { switchChainAsync } = useSwitchChain();
@@ -38,6 +50,10 @@ export const MintForm = () => {
     isChecking: false,
     isAvailable: false,
   });
+
+  useEffect(() => {
+    generateAvatar();
+  }, []);
 
   const handleSearch = async (value: string) => {
     setSearchLabel(value);
@@ -59,6 +75,13 @@ export const MintForm = () => {
     });
   };
 
+  const generateAvatar = () => {
+    setPunkAvatar({ ...punkAvatar, generating: true });
+    setTimeout(() => {
+      setPunkAvatar({ value: getRandomPunkImage(), generating: false });
+    }, 3000);
+  };
+
   const handleMint = async () => {
     if (!walletClient || !address) {
       return;
@@ -78,7 +101,7 @@ export const MintForm = () => {
           texts: [
             {
               key: "avatar",
-              value: testAvatar,
+              value: punkAvatar.value,
             },
           ],
           addresses: [
@@ -98,12 +121,12 @@ export const MintForm = () => {
 
     //@ts-ignore
     const tx = await walletClient.writeContract({
-        address: params.contractAddress,
-        value: params.value,
-        function: params.functionName,
-        args: params.args,
-        abi: params.abi
-    })
+      address: params.contractAddress,
+      value: params.value,
+      function: params.functionName,
+      args: params.args,
+      abi: params.abi,
+    });
   };
 
   const debouncedCheckAvailable = useCallback(
@@ -113,51 +136,64 @@ export const MintForm = () => {
 
   const mintBtnDisabled =
     searchLabel.length === 0 || indicator.isChecking || !indicator.isAvailable;
-  const isTaken = searchLabel.length > 0 && !indicator.isChecking && !indicator.isAvailable;
+  const isTaken =
+    searchLabel.length > 0 && !indicator.isChecking && !indicator.isAvailable;
 
   return (
     <>
       <div className="mint-form d-flex flex-column justify-content-end p-4">
-      <div className="form-header mb-3">
-            <h1>OpPunk</h1>
-            <p className="subtext">GET YOUR OP PUNK</p>
-          </div>
+        <div className="form-header mb-3">
+          <h1>OpPunk</h1>
+          <p className="subtext">GET YOUR OP PUNK</p>
+        </div>
         <div className="form-tech-container">
-
-        <div className="d-flex">
-          <div className="tech-avatar-cont mb-3 d-flex justify-content-center m-auto">
-            <img src={testAvatar} width={150}></img>
+          <div className="d-flex flex-column align-items-center">
+            <div className="tech-avatar-cont mb-3 d-flex align-items-center justify-content-center m-auto">
+              {!punkAvatar.generating && (
+                <img src={punkAvatar.value} width={150} height={150}></img>
+              )}
+              {punkAvatar.generating && <Spinner size="big" />}
+            </div>
+            <p
+              className={`generate-txt ${
+                punkAvatar.generating ? "disabled" : ""
+              }`}
+              onClick={
+                punkAvatar.generating ? undefined : () => generateAvatar()
+              }
+            >
+              ReGenerate_
+            </p>
           </div>
-        </div>
-        <p className="text-center">
-          <span style={{ color: "white" }}>
-            {searchLabel.length ? searchLabel : "{name}"}
-          </span>
-          .oppunk.eth
-        </p>
-        <div className="tech-input-container">
-          <input
-            onChange={(e) => handleSearch(e.target.value)}
-            placeholder="Your name here...."
-            className="tech-input"
-          ></input>
-          <div className="loader-cont">
-            {indicator.isChecking && <Spinner />}
+          <p className="text-center">
+            <span style={{ color: "white" }}>
+              {searchLabel.length ? searchLabel : "{name}"}
+            </span>
+            .oppunk.eth
+          </p>
+          <div className="tech-input-container">
+            <input
+              onChange={(e) => handleSearch(e.target.value)}
+              placeholder="Your name here...."
+              className="tech-input"
+            ></input>
+            <div className="loader-cont">
+              {indicator.isChecking && <Spinner />}
+            </div>
           </div>
-        </div>
-        <div>
-          <TechButton
-            disabled={mintBtnDisabled}
-            text={"register"}
-            className="mt-2 w-100"
-            onClick={() => handleMint()}
-          >
-            Register
-          </TechButton>
-        </div>
-        <div className="err-container mt-2">
-          {isTaken && <p className="err-message m-0">Already Registered_</p>}
-        </div>
+          <div>
+            <TechButton
+              disabled={mintBtnDisabled}
+              text={"register"}
+              className="mt-2 w-100"
+              onClick={() => handleMint()}
+            >
+              Register
+            </TechButton>
+          </div>
+          <div className="err-container mt-2">
+            {isTaken && <p className="err-message m-0">Already Registered_</p>}
+          </div>
         </div>
       </div>
     </>

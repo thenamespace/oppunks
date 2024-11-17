@@ -77,15 +77,22 @@
         flex-direction: column;
         position: relative;
     }
+
+    .nav-col {
+        display: flex;
+        justify-content: flex-end;
+    }
 }
 
+@media (max-width: 600px) {
+    .tech-container  {
+        .nav-col {
+            display: flex;
+            justify-content: center;
+        }
 
-.tech-avatar-cont {
-    width: 140px;
-    height: 140px;
-    outline: 1px solid $lightblue;
-    .tech-avatar {
-        width: 100%;
-        height: 100%;
+        .logo-col {
+            display: none;
+        }
     }
 }

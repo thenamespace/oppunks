@@ -71,7 +71,9 @@ export const SinglePunk = ({
       const _coin = parseInt(coinType);
       const coder = getCoderByCoinType(_coin);
       if (coder) {
-        _addresses[parseInt(coinType)] = coder.encode(hexToBytes(punk.addresses[coinType] as any))
+        _addresses[parseInt(coinType)] = coder.encode(
+          hexToBytes(punk.addresses[coinType] as any)
+        );
       }
     });
     Object.keys(punk.texts || {}).forEach((textKey) => {
@@ -163,8 +165,6 @@ export const SinglePunk = ({
         shouldUpdate = true;
       }
 
-
-
       if (shouldUpdate) {
         textsToChange.push({ key: txt, value: textValue });
       }
@@ -183,12 +183,12 @@ export const SinglePunk = ({
           existingAddresses[`${coinType}`].length > 0
         ) {
           if (addrCoder) {
-            const decodedValue = toHex(
-              addrCoder.decode(existingAddresses[coinType])
+            const enodedValue = addrCoder.encode(
+              hexToBytes(punk.addresses[coinType] as any)
             );
-            
+
             if (
-              decodedValue.toLocaleLowerCase() !==
+              enodedValue.toLocaleLowerCase() !==
               currentAddrValue.toLocaleLowerCase()
             ) {
               shouldUpdate = true;
@@ -242,7 +242,7 @@ export const SinglePunk = ({
           abi: resolverAbi,
           args: [nameNode, BigInt(addr.coin), value as any],
         });
-        data.push(encodedFunc)
+        data.push(encodedFunc);
       }
     });
     return data;
