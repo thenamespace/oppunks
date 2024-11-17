@@ -28,10 +28,6 @@ export const SideModal = (props: {
         {props.children}
       </div>
       </div>
-         {/* <div className="backdrop" onClick={() => {
-        //  props.onClose?.();
-      }}>
-      </div> */}
         </div>,
       document.body // This will only run on the client side
     );
