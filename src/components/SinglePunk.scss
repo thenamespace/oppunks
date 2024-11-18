@@ -22,6 +22,11 @@
         }
     }
 
+    .update-btn {
+        padding: 0px 10px;
+        margin-top: 10px;
+    }
+
     .record-container {
         padding: 20px;
         display: flex;
@@ -56,3 +61,38 @@
         }
     }
 }
+
+@media (max-width: 660px) {
+    .single-punk {
+        .avatar {
+            width: 90px;
+            height: 90px;
+            border-radius: 100%;
+            outline: 2px solid #FFF;
+        }
+        .subtext {
+            font-size: 18px;
+        }
+        .mainnav {
+            font-size: 14px;
+        }
+        .record-container {
+            padding: 5px !important;
+        }
+        .record-badge {
+            font-size: 13px;
+            .address {
+                width: 15px;
+                height: 15px;
+            }
+        }
+        .btn-plain {
+            height: 35px;
+        }
+
+        .input-label {
+            font-size: 13px;
+        }
+    }
+  }
+  

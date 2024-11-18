@@ -28,7 +28,7 @@ const namespaceClient = createNamespaceClient({
 const ETH_COIN = 60;
 const OP_COIN = 2147483658;
 
-const MAX_COUNT = 469;
+const MAX_COUNT = 737;
 
 const getRandomPunkImage = () => {
   const randomIndex = Math.floor(Math.random() * MAX_COUNT) + 1;
@@ -155,10 +155,23 @@ export const MintForm = () => {
       );
     } catch (err: any) {
       setMintState({ ...mintState, waitingWallet: false });
-      if (err.details) {
-        toast(err.details);
-      } else if (err?.response?.data) {
-        toast(err.response?.data?.message);
+      if (err.details && err.details.includes) {
+        const deniedErr =
+          err.details.includes("User rejected the request") ||
+          err.details.includes("User denied transaction signature");
+          const noFundsErr = err.details.includes("insufficient funds for gas")
+        if (!deniedErr && !noFundsErr) {
+          toast(err.details, { className: "tech-toasty", type: "error"});
+        }
+
+        if (noFundsErr) {
+          toast("Insufficient balance", { className: "tech-toasty", type:"error" });
+        }
+
+      } else if (err.response && err.response?.data?.message) {
+        toast(err.response?.data?.message, { className: "tech-toasty", type: "error"});
+      } else {
+        toast("Unexpected error happened :(", { className: "tech-toasty", type: "error"})
       }
       return;
     }
@@ -181,11 +194,16 @@ export const MintForm = () => {
       }, 8000);
     } catch (err: any) {
       setMintStep(MintSteps.Start);
-      const deniedErr =
-        err.details.includes("User rejected the request") ||
-        err.details.includes("User denied transaction signature");
-      if (!deniedErr) {
-        toast(err.details);
+      console.error(err);
+      if (err.details && err.details.includes) {
+        const deniedErr =
+          err.details.includes("User rejected the request") ||
+          err.details.includes("User denied transaction signature");
+        if (!deniedErr) {
+          toast(err.details, { className: "tech-toasty", type: "error"});
+        }
+      } else {
+        toast("Unexpected error happened :(", { className: "tech-toasty", type: "error"})
       }
     } finally {
       setMintState({ ...mintState, waitingTx: false, waitingWallet: false });
@@ -210,22 +228,18 @@ export const MintForm = () => {
             <p style={{fontSize:24, color:"white"}} className="text-center">Credit Cost</p>
             <div className="d-flex price justify-content-between align-items-center w-100" style={{color:"white"}}>
                <p>1 Letters</p>
-               <p>100$</p>
+               <p>50$</p>
             </div>
             <div className="d-flex price justify-content-between align-items-center w-100" style={{color:"white"}}>
                <p>2 Letters</p>
-               <p>45$</p>
-            </div>
-            <div className="d-flex price justify-content-between align-items-center w-100" style={{color:"white"}}>
-               <p>3 Letters</p>
                <p>25$</p>
             </div>
             <div className="d-flex price justify-content-between align-items-center w-100" style={{color:"white"}}>
-               <p>4 Letters</p>
+               <p>3 Letters</p>
                <p>5$</p>
             </div>
             <div className="d-flex price justify-content-between align-items-center w-100" style={{color:"white"}}>
-               <p>5+ Letters</p>
+               <p>4+ Letters</p>
                <p>Free</p>
             </div>
           </div>
@@ -240,7 +254,7 @@ export const MintForm = () => {
               <div className="d-flex flex-column align-items-center">
                 <div className="cost-info d-flex align-items-center" onClick={() => setShowCostModal(true)}>
                   <TbAlertSquare className="me-1"/>
-                  <div>Credit cost</div>
+                  <div>Subname cost</div>
                 </div>
                 <div className="tech-avatar-cont mb-3 d-flex align-items-center justify-content-center m-auto">
                   {!punkAvatar.generating && (

@@ -8,7 +8,6 @@ import {
   isAddress,
   namehash,
   parseAbi,
-  toBytes,
   toHex,
   hexToBytes,
 } from "viem";
@@ -26,12 +25,14 @@ import {
 } from "wagmi";
 import { optimism } from "viem/chains";
 import { validate as isValidBtcAddress } from "bitcoin-address-validation";
+import { toast } from "react-toastify";
 
 const resolverAbi = parseAbi([
   "function setText(bytes32 node, string key, string value) external",
   "function setAddr(bytes32 node, uint256 coinType, bytes value) external",
 ]);
 const opResolver = getL2ChainContracts("optimism").resolver;
+type TxState = "pending" | "success" | "failed"
 
 export const SinglePunk = ({
   punk,
@@ -46,10 +47,18 @@ export const SinglePunk = ({
   const { chain, address } = useAccount();
 
   const [selectedCoin, setSelectedCoin] = useState(60);
-  const [selectedText, setSelectedText] = useState("");
+  const [selectedText, setSelectedText] = useState("nick");
   const [addresseValues, setAddressValues] = useState<Record<number, string>>(
     {}
   );
+
+  const [btnState, setBtnState] = useState<{
+    waitingWallet: boolean
+    waitingTx: boolean
+  }>({
+    waitingTx: false,
+    waitingWallet: false
+  })
 
   const [textValues, setTextValues] = useState<Record<string, string>>({});
   const [currentNav, setCurrentNav] = useState<"text" | "addr">("addr");
@@ -255,17 +264,56 @@ export const SinglePunk = ({
 
     const resolverData = toResolverData();
 
-    const resp = await publicClient!!.simulateContract({
-      abi: parseAbi(["function multicall(bytes[] data) external"]),
-      address: opResolver,
-      functionName: "multicall",
-      args: [resolverData],
-      account: address!!,
-    });
+    try {
+      const resp = await publicClient!!.simulateContract({
+        abi: parseAbi(["function multicall(bytes[] data) external"]),
+        address: opResolver,
+        functionName: "multicall",
+        args: [resolverData],
+        account: address!!,
+      });
+  
+      try {
+        setBtnState({waitingWallet: true, waitingTx: false})
+        const tx =  await walletClient!!.writeContract(resp.request);
+        setBtnState({waitingTx: true, waitingWallet: false})
 
-    const tx = await walletClient!!.writeContract(resp.request);
-    console.log(tx);
+
+        await publicClient?.waitForTransactionReceipt({hash: tx, confirmations:2})
+        setBtnState({waitingTx: false, waitingWallet: false})
+
+        toast("Records updated successfully!", {position: "top-center", className: "tech-toasty"})
+
+        setTimeout(() => {
+          onUpdate()
+        },3000)
+
+      } catch(err: any) {
+        if (err.details) {
+          sendToast(err.details)
+        }
+      } finally {
+        setBtnState({waitingTx: false, waitingWallet: false})
+      }
+  
+    } catch(err:any) {
+      if (err.details) {
+        sendToast(err.details)
+      } else if (err.response) {
+        sendToast(err.response?.data?.message)
+      } else {
+        sendToast("Unknown error ocurred :(")
+      }
+
+    }
   };
+
+  const sendToast = (obj: any) => {
+    toast(obj,  {type: "error", className: "tech-toasty"});
+  }
+ 
+  const mintBtnLabel = btnState.waitingTx ? "Waiting for tx..." : btnState.waitingWallet ? "Waiting for wallet..." : "Update"
+  const mintBtnLoading = btnState.waitingTx || btnState.waitingWallet;
 
   return (
     <div className="single-punk">
@@ -287,13 +335,14 @@ export const SinglePunk = ({
           Texts
         </div>
       </div>
-      <div className="p-3">
+      <div className="update-btn">
         <PlainBtn
-          disabled={!hasRecordUpdates}
+          loading={mintBtnLoading}
+          disabled={!hasRecordUpdates || mintBtnLoading}
           onClick={handleUpdate}
           className="w-100"
         >
-          Update
+         {mintBtnLabel}
         </PlainBtn>
       </div>
       {/* ADDRESSES */}
@@ -314,8 +363,8 @@ export const SinglePunk = ({
                 </div>
               ))}
             </div>
-            <div className="w-100 mt-3">
-              <div style={{ color: "white" }} className="mt-1 mb-2">
+            <div className="w-100 mt-2">
+              <div style={{ color: "white" }} className="mt-1 mb-1 input-label">
                 {addressMetadata.name} address
               </div>
               <input
@@ -340,7 +389,7 @@ export const SinglePunk = ({
       {/* TEXTS */}
       {currentNav === "text" && (
         <>
-          <div className="record-container d-flex flex-column mt-3 align-items-center">
+          <div className="record-container d-flex flex-column align-items-center">
             <div className="d-flex flex-wrap justify-content-center">
               {Object.values(KnownTexts).map((txt) => (
                 <div
@@ -374,8 +423,8 @@ export const SinglePunk = ({
             </div>
             {selectedText && (
               <div className="w-100">
-                <div className="mb-2 mb-2">
-                  {textMetadata.label} record value
+                <div className="mb-1 input-label mb-1">
+                  {textMetadata.label} record
                 </div>
                 <input
                   value={textValues[selectedText] || ""}
@@ -392,4 +441,4 @@ export const SinglePunk = ({
       )}
     </div>
   );
-};
+}
