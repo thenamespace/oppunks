@@ -1,40 +1,45 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/pages/api-reference/create-next-app).
+<div style="display:flex; justify-content:center;margin-bottom:10px">
+  <img src="./src/assets/logo/ens-logo-blue.png" width="80px">
+  <img src="./src/assets/logo/namespace.png" width="100px">
+  <img src="./src/assets/logo/op.svg" width="90px">
+</div>
+
+# OP PUNKS
+
+<div>
+  <img src="https://punks.namespace.ninja/punk_1.jpg" width="140px">
+ <img src="https://punks.namespace.ninja/punk_66.jpg" width="140px">
+  <img src="https://punks.namespace.ninja/punk_234.jpg" width="140px">
+   <img src="https://punks.namespace.ninja/punk_255.jpg" width="140px">
+    <img src="https://punks.namespace.ninja/punk_477.jpg" width="140px">
+     <img src="https://punks.namespace.ninja/punk_546.jpg" width="140px">
+     
+</div>
+
+Oppunks is a decentralized application (dApp) for minting subnames under the `oppunk.eth` ENS name. These subnames are stored on the Optimism network.  
+
+The project is built on top of Namespace's L2 subname listing functionality, leveraging the Namespace SDK for seamless interaction with Namespace contracts and APIs.  
+
+It allows minters to mint `oppunk.eth` subnames and manage their address and text records
 
 ## Getting Started
 
-First, run the development server:
+Follow these steps to set up and run the project:
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+1. **Clone the Repository**
+   ```bash
+   git clone https://github.com/your-username/oppunks.git
+   cd oppunks
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+2. **Start Dapp**
+   ```bash
+   yarn dev
 
-You can start editing the page by modifying `pages/index.tsx`. The page auto-updates as you edit the file.
+## Authors
 
-[API routes](https://nextjs.org/docs/pages/building-your-application/routing/api-routes) can be accessed on [http://localhost:3000/api/hello](http://localhost:3000/api/hello). This endpoint can be edited in `pages/api/hello.ts`.
-
-The `pages/api` directory is mapped to `/api/*`. Files in this directory are treated as [API routes](https://nextjs.org/docs/pages/building-your-application/routing/api-routes) instead of React pages.
-
-This project uses [`next/font`](https://nextjs.org/docs/pages/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn-pages-router) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/pages/building-your-application/deploying) for more details.
+<a href="https://github.com/nenadmitt">
+  <div style="display:flex;align-items:center;">
+    <img  src="https://github.com/nenadmitt.png" width="35px" style="border-radius:100%;margin-right:7px"/>
+    artii.eth
+  </div>
+</a>
