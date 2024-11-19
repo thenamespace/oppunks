@@ -225,21 +225,21 @@ export const MintForm = () => {
       <div className="mint-form d-flex flex-column justify-content-end p-4">
         <SideModal open={showCostModal} onClose={() => setShowCostModal(false)}>
           <div className="cost-modal">
-            <p style={{fontSize:24, color:"white"}} className="text-center">Credit Cost</p>
+            <p style={{fontSize:24, color:"white"}} className="text-center">Subname Cost</p>
             <div className="d-flex price justify-content-between align-items-center w-100" style={{color:"white"}}>
-               <p>1 Letters</p>
+               <p>1 Characters</p>
                <p>50$</p>
             </div>
             <div className="d-flex price justify-content-between align-items-center w-100" style={{color:"white"}}>
-               <p>2 Letters</p>
-               <p>25$</p>
+               <p>2 Characters</p>
+               <p>20$</p>
             </div>
             <div className="d-flex price justify-content-between align-items-center w-100" style={{color:"white"}}>
-               <p>3 Letters</p>
+               <p>3 Characters</p>
                <p>5$</p>
             </div>
             <div className="d-flex price justify-content-between align-items-center w-100" style={{color:"white"}}>
-               <p>4+ Letters</p>
+               <p>4+ Characters</p>
                <p>Free</p>
             </div>
           </div>

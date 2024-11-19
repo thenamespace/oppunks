@@ -170,11 +170,10 @@
 
 .cost-modal {
   .price {
-    padding: 15px;
-    border: 1px solid $lightblue;
-
+    padding: 5px 6px;
     p {
       margin: 0px;
     }
+    border-bottom: 1px solid $lightblue;
   }
 }
