@@ -1,4 +1,4 @@
-import bgCity from "../assets/background.png";
+import bgCity from "../assets/background.jpg";
 import leftGliphs from "../assets/left-glips.png";
 import rightGliphs from "../assets/right-glips.png";
 import { TechButton } from "./TechBtn";
