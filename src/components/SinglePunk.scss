@@ -31,6 +31,12 @@
         padding: 20px;
         display: flex;
 
+
+        .text-green {
+            color: $lightblue;
+            font-size: 14px;
+        }
+
         .record-badge {
             outline: 1px solid $lightblue;
             display: flex;
@@ -44,6 +50,8 @@
             &.unset {
                 opacity: 0.5;
             }
+
+
 
             &:hover {
                 transform: scale(1.1);

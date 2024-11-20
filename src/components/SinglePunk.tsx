@@ -47,7 +47,7 @@ export const SinglePunk = ({
   const { chain, address } = useAccount();
 
   const [selectedCoin, setSelectedCoin] = useState(60);
-  const [selectedText, setSelectedText] = useState("nick");
+  const [selectedText, setSelectedText] = useState("name");
   const [addresseValues, setAddressValues] = useState<Record<number, string>>(
     {}
   );
@@ -349,6 +349,7 @@ export const SinglePunk = ({
       {currentNav === "addr" && (
         <>
           <div className="record-container d-flex flex-column align-items-center">
+          <p className="text-center text-green mt-1 mb-1">Select record to edit</p>
             <div className="d-flex flex-wrap justify-content-center">
               {Object.values(KnownAddresses).map((knownAddr) => (
                 <div
@@ -390,6 +391,7 @@ export const SinglePunk = ({
       {currentNav === "text" && (
         <>
           <div className="record-container d-flex flex-column align-items-center">
+          <p className="text-center text-green mt-1 mb-1">Select record to edit</p>
             <div className="d-flex flex-wrap justify-content-center">
               {Object.values(KnownTexts).map((txt) => (
                 <div
