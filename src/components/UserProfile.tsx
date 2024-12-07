@@ -3,8 +3,23 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { useAccount, useDisconnect, usePublicClient } from "wagmi";
+import {
+  addEnsContracts,
+  ensPublicActions,
+  ensSubgraphActions,
+} from "@ensdomains/ensjs";
+import { mainnet } from "viem/chains";
+import { createPublicClient, http } from "viem";
 
-const cacheExpiration = 60 * 1000;
+const ensMainnetClient = createPublicClient({
+  chain: {
+    ...addEnsContracts(mainnet),
+  },
+  // Temp solution
+  transport: http("https://appv2.namespace.ninja/rpc/mainnet"),
+})
+  .extend(ensSubgraphActions)
+  .extend(ensPublicActions);
 
 export const UserProfile = () => {
   const publicClient = usePublicClient({ chainId: 1 });
@@ -19,14 +34,19 @@ export const UserProfile = () => {
   });
 
   useEffect(() => {
+    ("");
+    publicClient?.getEnsName;
     if (address && publicClient) {
       const init = async () => {
         let ensName: string;
         let ensAvatar: string;
-        const name = await publicClient.getEnsName({ address });
-        if (name && name.length > 0) {
-          ensName = name;
-          const avatar = await publicClient.getEnsAvatar({ name });
+        const name = await ensMainnetClient.getName({ address });
+        if (name?.match) {
+          ensName = name.name;
+          const avatar = await ensMainnetClient.getTextRecord({
+            name: ensName,
+            key: "avatar",
+          });
           if (avatar) {
             ensAvatar = avatar;
           }
