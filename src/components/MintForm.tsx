@@ -19,6 +19,7 @@ import Link from "next/link";
 import { useConnectModal } from "@rainbow-me/rainbowkit";
 import { SideModal } from "./SideModal";
 import { TbAlertSquare } from "react-icons/tb";
+import { normalise } from "@ensdomains/ensjs/utils";
 
 const namespaceClient = createNamespaceClient({
   chainId: optimism.id,
@@ -88,11 +89,23 @@ export const MintForm = () => {
   }, []);
 
   const handleSearch = async (value: string) => {
-    setSearchLabel(value);
+ 
+    const _value = value.toLocaleLowerCase();
 
-    if (value.length > 0) {
+    if (_value.includes(".")) {
+      return;
+    }
+
+    try {
+      normalise(_value);
+    } catch (err) {
+      return;
+    }
+    setSearchLabel(_value);
+
+    if (_value.length > 0) {
       setIndicator({ isAvailable: false, isChecking: true });
-      debouncedCheckAvailable(value);
+      debouncedCheckAvailable(_value);
     }
   };
 
@@ -284,6 +297,7 @@ export const MintForm = () => {
                   onChange={(e) => handleSearch(e.target.value)}
                   placeholder="Your name here...."
                   className="tech-input"
+                  value={searchLabel}
                 ></input>
                 <div className="loader-cont">
                   {indicator.isChecking && <Spinner />}
