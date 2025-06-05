@@ -16,7 +16,7 @@ const ensMainnetClient = createPublicClient({
     ...addEnsContracts(mainnet),
   },
   // Temp solution
-  transport: http("https://appv2.namespace.ninja/rpc/mainnet"),
+  transport: http("https://eth-mainnet.g.alchemy.com/v2/p40cPshu1Od-btzLdd7JzAAFSiS93AfX"),
 })
   .extend(ensSubgraphActions)
   .extend(ensPublicActions);

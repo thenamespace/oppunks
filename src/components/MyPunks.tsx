@@ -9,7 +9,7 @@ import { SinglePunk } from "./SinglePunk";
 import { PunkSubname } from "./Models";
 import { useRouter } from "next/router";
 
-const indexer = "https://indexer.namespace.tech/api/v1/nodes";
+const indexer = "https://indexer.namespace.ninja/api/v1/nodes";
 
 const fetchPunkNames = async (owner: string) => {
   const { data } = await axios.get<{

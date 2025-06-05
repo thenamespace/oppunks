@@ -16,7 +16,7 @@ import chainIcon from "../assets/chains/circle.svg";
 import { KnownText, KnownTexts } from "./records/TextRecords";
 import { CgProfile } from "react-icons/cg";
 import { IoShareSocialSharp } from "react-icons/io5";
-import { getL2ChainContracts } from "namespace-sdk";
+import { getL2NamespaceContracts } from "@namespacesdk/addresses";
 import {
   useAccount,
   usePublicClient,
@@ -31,7 +31,7 @@ const resolverAbi = parseAbi([
   "function setText(bytes32 node, string key, string value) external",
   "function setAddr(bytes32 node, uint256 coinType, bytes value) external",
 ]);
-const opResolver = getL2ChainContracts("optimism").resolver;
+const opResolver = getL2NamespaceContracts(optimism.id).resolver;
 type TxState = "pending" | "success" | "failed"
 
 export const SinglePunk = ({

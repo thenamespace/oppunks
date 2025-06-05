@@ -1,8 +1,7 @@
 import {
-  createNamespaceClient,
-  Listing,
-  MintTransactionParameters,
-} from "namespace-sdk";
+  createMintClient,
+  MintTransactionResponse,
+} from "@namespacesdk/mint-manager"
 import { PlainBtn, TechButton } from "./TechBtn";
 import { optimism } from "viem/chains";
 import { useCallback, useEffect, useState } from "react";
@@ -21,10 +20,15 @@ import { SideModal } from "./SideModal";
 import { TbAlertSquare } from "react-icons/tb";
 import { normalise } from "@ensdomains/ensjs/utils";
 
-const namespaceClient = createNamespaceClient({
-  chainId: optimism.id,
+const ENS_NAME = "oppunk.eth"
+
+const mintClient = createMintClient({
   mintSource: "oppunks",
-});
+  cursomRpcUrls: {
+    [optimism.id]: "https://opt-mainnet.g.alchemy.com/v2/p40cPshu1Od-btzLdd7JzAAFSiS93AfX"
+  }
+})
+
 
 const ETH_COIN = 60;
 const OP_COIN = 2147483658;
@@ -36,14 +40,6 @@ const getRandomPunkImage = () => {
   return `https://punks.namespace.ninja/punk_${randomIndex}.jpg`;
 };
 
-const oppunksListing: Listing = {
-  fullName: "oppunk.eth",
-  label: "oppunk",
-  network: "mainnet",
-  node: "0x0193fecccb6981fb38c1b799ef8809de13b65730a4b7d38ab79c3a8ffdf5a237",
-  listingType: "l2",
-  registryNetwork: "optimism",
-};
 
 enum MintSteps {
   Start = 0,
@@ -110,10 +106,7 @@ export const MintForm = () => {
   };
 
   const checkAvailable = async (value: string) => {
-    const isAvailable = await namespaceClient.isSubnameAvailable(
-      oppunksListing,
-      value
-    );
+    const isAvailable = await mintClient.isL2SubnameAvailable(`${value}.${ENS_NAME}`, optimism.id);
     setIndicator({
       isChecking: false,
       isAvailable: isAvailable,
@@ -134,38 +127,50 @@ export const MintForm = () => {
     }
 
     setMintState({ ...mintState, waitingWallet: true });
-    let params: MintTransactionParameters;
+    let params: MintTransactionResponse
+    let mintRequest: any
     try {
       if (!chain || chain.id !== optimism.id) {
         switchChain({ chainId: optimism.id });
       }
-      params = await namespaceClient.getMintTransactionParameters(
-        oppunksListing,
-        {
-          minterAddress: address,
-          subnameLabel: searchLabel,
-          expiryInYears: 1,
-          records: {
-            texts: [
-              {
-                key: "avatar",
-                value: punkAvatar.value,
-              },
-            ],
-            addresses: [
-              {
-                address: address,
-                coinType: ETH_COIN,
-              },
-              {
-                address: address,
-                coinType: OP_COIN,
-              },
-            ],
-          },
-          subnameOwner: address,
+
+      params  = await mintClient.getMintTransactionParameters({
+        label: searchLabel,
+        minterAddress: address!,
+        parentName: ENS_NAME,
+        expiryInYears: 1,
+        owner: address,
+        records: {
+          addresses: [
+            {
+              coin: ETH_COIN,
+              value: address!
+            },
+            {
+              coin: OP_COIN,
+              value: address!
+            }
+          ],
+          texts: [
+            {
+              key: "avatar",
+              value: punkAvatar.value
+            }
+          ]
         }
-      );
+      })
+
+      const { request } = await publicClient!.simulateContract({
+        abi: params.abi,
+        address: params.contractAddress,
+        functionName: params.functionName,
+        args: params.args,
+        value: params.value,
+        account: address!
+      })
+
+      mintRequest = request;
+  
     } catch (err: any) {
       setMintState({ ...mintState, waitingWallet: false });
       if (err.details && err.details.includes) {
@@ -186,18 +191,13 @@ export const MintForm = () => {
       } else {
         toast("Unexpected error happened :(", { className: "tech-toasty", type: "error"})
       }
+      console.error(err, "HERE!!");
       return;
     }
 
     try {
       //@ts-ignore
-      const tx = await walletClient.writeContract({
-        address: params.contractAddress,
-        value: params.value,
-        function: params.functionName,
-        args: params.args,
-        abi: params.abi,
-      });
+      const tx = await walletClient!.writeContract(mintRequest);
       setMintStep(MintSteps.PendingTx);
       setMintState({ waitingWallet: false, waitingTx: true, txHash: tx });
       setTimeout(() => {
